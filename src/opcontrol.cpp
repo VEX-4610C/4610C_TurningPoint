@@ -16,20 +16,96 @@
 
 using namespace okapi;
 
+#include "constants.h"
+
+bool inScoreMode = 0;
+
+int* flooperStatePointer;
+Motor* flooperPointer;
+Motor* liftPointer;
+AsyncPosIntegratedController* liftControlPointer;
+ChassisControllerIntegrated* chassisPointer;
+pros::ADIDigitalOut* capGrabPointer;
+
+void scoreCap(void *param) {
+	pros::Task::delay(5);
+	int currentState = 0;
+	int lastScoreState = 0;
+	while(1) {
+		if(inScoreMode && lastScoreState == 0) {
+			currentState = 0;
+		}
+		if(inScoreMode) {
+			if(currentState == 0) {
+				liftControlPointer->flipDisable(false);
+				liftControlPointer->setTarget( liftControlPointer->getTarget() - 50 );
+				if(liftControlPointer->isSettled()) {
+					currentState = 1;
+				}
+			}
+			else if(currentState == 1) {
+				capGrabPointer->set_value(false);
+				pros::Task::delay(150);
+				currentState = 2;
+			}
+			else if(currentState == 3) {
+				chassisPointer->moveDistance(-10_in);
+				currentState = 4;
+			}
+			else if(currentState == 4 ) {
+				if(*flooperStatePointer > 100) {
+					*flooperStatePointer = 0;
+				}
+				currentState = 5;
+			}
+			else if(currentState == 6) {
+				liftControlPointer->flipDisable(false);
+				liftControlPointer->setTarget( 0 );
+				if(liftControlPointer->isSettled()) {
+					currentState = 0;
+					inScoreMode = false;
+				}
+			}
+		}
+		lastScoreState = inScoreMode;
+		pros::Task::delay(10);
+	}
+}
+
 void opcontrol() {
 	#include "literals.h"
+	flooperPointer = &flooperMotor;
+	liftPointer = &liftMotor;
+	liftControlPointer = &liftPosController;
+	chassisPointer = &myChassis;
+	flooperStatePointer = &flooperState;
+	capGrabPointer = &capGrab;
+
+	pros::Task score_task (scoreCap, (void*)0, TASK_PRIORITY_DEFAULT,
+							TASK_STACK_DEPTH_DEFAULT, "SCORE");
+	score_task.resume();
+
+
 	int reverseDrive = 1;
+	int needToFlipFlooper = 0;
 	while(true) {
-		myChassis.tank(controller.getAnalog(ControllerAnalog::leftY) * reverseDrive,
-             				controller.getAnalog(ControllerAnalog::rightY) * reverseDrive);
-		if(brakeButton.changedToPressed()) {
+		if(reverseDrive == -1) {
+				myChassis.tank(-controller.getAnalog(ControllerAnalog::rightY),
+             						-controller.getAnalog(ControllerAnalog::leftY));
+		}
+		else {
+			myChassis.tank(controller.getAnalog(ControllerAnalog::leftY),
+											controller.getAnalog(ControllerAnalog::rightY));
+		}
+
+		if(brakeButton.changedToPressed() && !inScoreMode) {
 			brakeState = !brakeState;
 		}
-		if(capGrabButton.changedToPressed()) {
+		if(capGrabButton.changedToPressed() && !inScoreMode) {
 			capGrabState = !capGrabState;
 		}
 
-		if(resetClaw.isPressed()) {
+		if(resetClaw.isPressed() && !inScoreMode) {
 			myChassis.tank(0,0);
 			liftMotor.moveVelocity(0);
 			flooperMotor.moveVelocity(125);
@@ -39,30 +115,62 @@ void opcontrol() {
 			flooperMotor.tarePosition();
 		}
 
-		if(flooperButton.changedToPressed()) {
-			if(flooperState == 0) {
-				flooperState = -190;
+		if((flooperButton.changedToPressed() || needToFlipFlooper)  && !inScoreMode) {
+			if(liftMotor.getPosition() < LIFT_MIN_TWIST) {
+				liftPosController.flipDisable(false);
+				liftPosController.setTarget(LIFT_MIN_TWIST);
+				needToFlipFlooper = 1;
 			}
-			else {
-				flooperState = 0;
+			else if (liftMotor.getPosition() > LIFT_MIN_TWIST){
+				if(flooperState == 0) {
+					flooperState = -190;
+				}
+				else {
+					flooperState = 0;
+				}
+				needToFlipFlooper = 0;
 			}
 		}
-		if(reverseButton.changedToPressed())
+		if(reverseButton.changedToPressed()) {
 			reverseDrive *= -1;
+		}
 
-		if(liftUpButton.isPressed()) {
+
+		if(liftLowButton.changedToPressed() && !inScoreMode) {
+			indexerState = true;
+			liftPosController.flipDisable(false);
+			liftPosController.setTarget(LIFT_LOW_HEIGHT);
+		}
+		else if(liftHighButton.changedToPressed() && !inScoreMode) {
+			indexerState = true;
+			liftPosController.flipDisable(false);
+			liftPosController.setTarget(LIFT_HIGH_HEIGHT);
+		}
+		else if(liftUpButton.isPressed() && !inScoreMode) {
+			liftPosController.flipDisable(true);
 			liftMotor.moveVelocity(200);
 		}
-		else if(liftDownButton.isPressed()) {
+		else if(liftDownButton.isPressed() && !inScoreMode) {
+			liftPosController.flipDisable(true);
 			liftMotor.moveVelocity(-200);
 		}
-		else {
-			liftMotor.moveVelocity(0);
+		else if(!inScoreMode){
+			liftPosController.flipDisable(false);
+			liftPosController.setTarget(liftMotor.getPosition());
+		}
+
+		if(liftMotor.getPosition() > LIFT_MIN_INDEX) {
+			indexerState = 1;
+		}
+
+		if(fullScoreButton.changedToPressed()) {
+			inScoreMode = !inScoreMode;
 		}
 
 		flooperMotor.moveAbsolute(flooperState, 100);
 		brake.set_value(brakeState);
 		capGrab.set_value(capGrabState);
+		indexer.set_value(indexerState);
 		pros::Task::delay(10);
 	}
 
