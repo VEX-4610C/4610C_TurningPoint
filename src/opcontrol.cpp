@@ -1,4 +1,5 @@
 #include "okapi/api.hpp"
+#include <iostream>
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -20,6 +21,7 @@ using namespace okapi;
 
 bool inScoreMode = 0;
 
+
 int* flooperStatePointer;
 Motor* flooperPointer;
 Motor* liftPointer;
@@ -38,7 +40,7 @@ void scoreCap(void *param) {
 		if(inScoreMode) {
 			if(currentState == 0) {
 				liftControlPointer->flipDisable(false);
-				liftControlPointer->setTarget( liftControlPointer->getTarget() - 50 );
+				liftControlPointer->setTarget( LIFT_MIN_INDEX - 50 );
 				if(liftControlPointer->isSettled()) {
 					currentState = 1;
 				}
@@ -74,6 +76,9 @@ void scoreCap(void *param) {
 
 void opcontrol() {
 	#include "literals.h"
+	char* strPlay = (char*) malloc(64);
+	double lastLift = 0;
+	int manualLift = 1;
 	flooperPointer = &flooperMotor;
 	liftPointer = &liftMotor;
 	liftControlPointer = &liftPosController;
@@ -81,13 +86,17 @@ void opcontrol() {
 	flooperStatePointer = &flooperState;
 	capGrabPointer = &capGrab;
 
-	pros::Task score_task (scoreCap, (void*)0, TASK_PRIORITY_DEFAULT,
+	/* pros::Task score_task (scoreCap, (void*)0, TASK_PRIORITY_DEFAULT,
 							TASK_STACK_DEPTH_DEFAULT, "SCORE");
-	score_task.resume();
+	score_task.resume(); */
 
 
 	int reverseDrive = 1;
 	int needToFlipFlooper = 0;
+	liftMotor.moveVelocity(-200);
+	pros::Task::delay(500);
+	liftMotor.tarePosition();
+	liftMotor.moveVelocity(0);
 	while(true) {
 		if(reverseDrive == -1) {
 				myChassis.tank(-controller.getAnalog(ControllerAnalog::rightY),
@@ -137,40 +146,60 @@ void opcontrol() {
 
 
 		if(liftLowButton.changedToPressed() && !inScoreMode) {
-			indexerState = true;
+			manualIndex = 0;
+			manualLift = 0;
+			indexerState = false;
 			liftPosController.flipDisable(false);
 			liftPosController.setTarget(LIFT_LOW_HEIGHT);
 		}
 		else if(liftHighButton.changedToPressed() && !inScoreMode) {
-			indexerState = true;
+			manualIndex = 0;
+			manualLift = 0;
+			indexerState = false;
 			liftPosController.flipDisable(false);
 			liftPosController.setTarget(LIFT_HIGH_HEIGHT);
+
 		}
 		else if(liftUpButton.isPressed() && !inScoreMode) {
+			manualIndex = 0;
 			liftPosController.flipDisable(true);
 			liftMotor.moveVelocity(200);
+			manualLift = 1;
 		}
 		else if(liftDownButton.isPressed() && !inScoreMode) {
+			manualIndex = 0;
+			if(liftMotor.getPosition() < (LIFT_MIN_INDEX + 250)) {
+				indexerState = 1;
+			}
 			liftPosController.flipDisable(true);
 			liftMotor.moveVelocity(-200);
+			manualLift = 1;
 		}
-		else if(!inScoreMode){
+		else if(!inScoreMode && manualLift){
 			liftPosController.flipDisable(false);
 			liftPosController.setTarget(liftMotor.getPosition());
 		}
 
-		if(liftMotor.getPosition() > LIFT_MIN_INDEX) {
+		if(liftMotor.getPosition() > LIFT_MIN_INDEX && lastLift < LIFT_MIN_INDEX && manualIndex == 0 && !liftDownButton.isPressed()) {
+			indexerState = 0;
+		}
+		else if(liftMotor.getPosition() < LIFT_MIN_INDEX && lastLift > LIFT_MIN_INDEX && manualIndex == 0) {
 			indexerState = 1;
 		}
 
-		if(fullScoreButton.changedToPressed()) {
-			inScoreMode = !inScoreMode;
+		if(manualIndexButton.changedToPressed()) {
+			indexerState = !indexerState;
+			manualIndex = 1;
 		}
 
+
 		flooperMotor.moveAbsolute(flooperState, 100);
-		brake.set_value(brakeState);
 		capGrab.set_value(capGrabState);
 		indexer.set_value(indexerState);
+
+		sprintf(strPlay, "%d %9.7f", LIFT_MIN_INDEX, liftMotor.getPosition());
+		pros::lcd::set_text(3, strPlay);
+		lastLift = liftMotor.getPosition();
 		pros::Task::delay(10);
 	}
 

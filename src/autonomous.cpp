@@ -18,6 +18,8 @@
 
 using namespace okapi;
 extern pros::ADIGyro gyro;
+
+#include "constants.h"
 #define GYRO_MULTIPLIER 9
 
 template <typename T> T CLAMP(const T& value, const T& low, const T& high)
@@ -87,11 +89,26 @@ void closeBlue() {
 
 void parkFar() {
   #include "literals.h"
+
+  liftPosController.flipDisable(true);
+  liftMotor.tarePosition();
+  liftMotor.moveVelocity(-200);
+  pros::Task::delay(1000);
+  liftMotor.moveVelocity(0);
+
+  flooperMotor.moveVelocity(125);
+  pros::Task::delay(350);
+  flooperMotor.moveVelocity(0);
+  pros::Task::delay(50);
+  flooperMotor.tarePosition();
+
+  pros::Task::delay(500);
+
   myChassis.setMaxVelocity(125);
-  myChassis.moveDistance(-31_in);
+  myChassis.moveDistance(38_in);
   myChassis.turnAngle(90_deg);
   myChassis.setMaxVelocity(200);
-  myChassis.moveDistance(-31_in);
+  myChassis.moveDistance(-36_in);
 }
 void farAutoA() {
   #include "literals.h"
@@ -102,10 +119,10 @@ void farAutoA() {
   myChassis.turnAngle(63_deg);
   myChassis.moveDistance(30_in);
 
-  capGrab.set_state(true);
+  capGrab.set_value(true);
   pros::Task::delay(100);
   flooperMotor.moveAbsolute(190, 150);
-  capGrab.set_state(false);
+  capGrab.set_value(false);
   myChassis.moveDistance(-30_in);
   myChassis.turnAngle(37_deg);
 
@@ -116,11 +133,9 @@ void farAutoB() {
   #include "literals.h"
 
   liftPosController.flipDisable(true);
-  liftMotor.moveVelocity(100);
-  pros::Task::delay(250);
-  liftMotor.moveAbsolute(-200);
+  liftMotor.moveAbsolute(-200, 200);
   pros::Task::delay(500);
-  liftMotor.moveAbsolute(0);
+  liftMotor.moveAbsolute(0, 200);
 
   flooperMotor.moveVelocity(125);
   pros::Task::delay(350);
@@ -132,19 +147,19 @@ void farAutoB() {
   myChassis.setMaxVelocity(125);
   myChassis.moveDistance(58_in);
 
-  capGrab.set_state(true);
+  capGrab.set_value(true);
   pros::Task::delay(100);
 
   myChassis.moveDistance(-28_in);
   liftPosController.setTarget(LIFT_LOW_HEIGHT);
   myChassis.turnAngle(-127_deg);
-  flooper.moveAbsolute(190, 150);
+  flooperMotor.moveAbsolute(190, 150);
 
   indexer.set_value(true);
   myChassis.moveDistance(10_in);
   liftPosController.setTarget(LIFT_LOW_HEIGHT - 50);
 
-  capGrab.set_state(false);
+  capGrab.set_value(false);
   pros::Task::delay(100);
   myChassis.moveDistance(-10_in);
   liftPosController.setTarget(0);

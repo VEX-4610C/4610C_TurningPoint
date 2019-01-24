@@ -1,5 +1,6 @@
 bool brakeState = false;
 int flooperState = 0;
+bool manualIndex = 0;
 bool capGrabState = false;
 bool indexerState = 0;
 
@@ -16,11 +17,9 @@ backRight.setCurrentLimit(12000);
 auto myChassis = ChassisControllerFactory::create(
   {frontLeft, backLeft}, {frontRight, backRight},
   AbstractMotor::gearset::green,
-  {4_in, 11_in}
+  {4_in, 15.25_in}
 );
 
-
-auto brake = pros::ADIDigitalOut(2, false);
 auto indexer = pros::ADIDigitalOut(4, false);
 
 auto liftMotor = Motor(9, false, AbstractMotor::gearset::green);
@@ -45,6 +44,7 @@ auto reverseButton = ControllerButton(ControllerDigital::A);
 auto liftLowButton = ControllerButton(ControllerDigital::Y);
 auto liftHighButton =  ControllerButton(ControllerDigital::X);
 auto fullScoreButton =  ControllerButton(ControllerDigital::up);
+auto manualIndexButton =  ControllerButton(ControllerDigital::down);
 
 
 
