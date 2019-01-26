@@ -6,8 +6,8 @@ bool indexerState = 0;
 
 auto frontLeft = Motor(19, false, AbstractMotor::gearset::green);
 auto backLeft = Motor(20, false, AbstractMotor::gearset::green);
-auto frontRight = Motor(16, true, AbstractMotor::gearset::green);
-auto backRight = Motor(18, true, AbstractMotor::gearset::green);
+auto frontRight = Motor(13, true, AbstractMotor::gearset::green);
+auto backRight = Motor(15, true, AbstractMotor::gearset::green);
 
 frontLeft.setCurrentLimit(12000);
 backLeft.setCurrentLimit(12000);

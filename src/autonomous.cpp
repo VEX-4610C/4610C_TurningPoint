@@ -89,12 +89,13 @@ void closeBlue() {
 
 void parkFar() {
   #include "literals.h"
+  myChassis.setMaxVelocity(125);
 
   liftPosController.flipDisable(true);
-  liftMotor.tarePosition();
   liftMotor.moveVelocity(-200);
-  pros::Task::delay(1000);
+  pros::Task::delay(1200);
   liftMotor.moveVelocity(0);
+  liftMotor.tarePosition();
 
   flooperMotor.moveVelocity(125);
   pros::Task::delay(350);
@@ -104,11 +105,11 @@ void parkFar() {
 
   pros::Task::delay(500);
 
-  myChassis.setMaxVelocity(125);
-  myChassis.moveDistance(38_in);
-  myChassis.turnAngle(90_deg);
+
+  myChassis.moveDistance(36_in);
+  myChassis.turnAngle(-90_deg);
   myChassis.setMaxVelocity(200);
-  myChassis.moveDistance(-36_in);
+  myChassis.moveDistance(-32_in);
 }
 void farAutoA() {
   #include "literals.h"
