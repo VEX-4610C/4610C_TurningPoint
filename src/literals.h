@@ -6,13 +6,9 @@ bool indexerState = 0;
 
 auto frontLeft = Motor(19, false, AbstractMotor::gearset::green);
 auto backLeft = Motor(20, false, AbstractMotor::gearset::green);
-auto frontRight = Motor(13, true, AbstractMotor::gearset::green);
+auto frontRight = Motor(12, true, AbstractMotor::gearset::green);
 auto backRight = Motor(15, true, AbstractMotor::gearset::green);
 
-frontLeft.setCurrentLimit(12000);
-backLeft.setCurrentLimit(12000);
-frontRight.setCurrentLimit(12000);
-backRight.setCurrentLimit(12000);
 
 auto myChassis = ChassisControllerFactory::create(
   {frontLeft, backLeft}, {frontRight, backRight},
@@ -24,12 +20,10 @@ auto indexer = pros::ADIDigitalOut(4, false);
 
 auto liftMotor = Motor(9, false, AbstractMotor::gearset::green);
 liftMotor.setBrakeMode(AbstractMotor::brakeMode::brake);
-liftMotor.setCurrentLimit(12000);
 auto liftPosController = AsyncControllerFactory::posIntegrated(liftMotor, 200);
 
 
-auto flooperMotor = Motor(10, false, AbstractMotor::gearset::green);
-flooperMotor.setCurrentLimit(12000);
+auto flooperMotor = Motor(5, false, AbstractMotor::gearset::green);
 flooperMotor.setBrakeMode(AbstractMotor::brakeMode::brake);
 auto capGrab = pros::ADIDigitalOut(1, true);
 
@@ -46,7 +40,12 @@ auto liftHighButton =  ControllerButton(ControllerDigital::X);
 auto fullScoreButton =  ControllerButton(ControllerDigital::up);
 auto manualIndexButton =  ControllerButton(ControllerDigital::down);
 
-
+/* flooperMotor.setCurrentLimit(12000);
+liftMotor.setCurrentLimit(12000);
+frontLeft.setCurrentLimit(12000);
+backLeft.setCurrentLimit(12000);
+frontRight.setCurrentLimit(12000);
+backRight.setCurrentLimit(12000); */
 
 
 Controller controller;

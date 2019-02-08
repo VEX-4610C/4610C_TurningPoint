@@ -166,6 +166,32 @@ void farAutoB() {
   liftPosController.setTarget(0);
 }
 
+void pSkills() {
+  #include "literals.h"
+
+  /* liftPosController.flipDisable(true);
+  liftMotor.moveAbsolute(-200, 200);
+  pros::Task::delay(500);
+  liftMotor.moveAbsolute(0, 200);
+
+  flooperMotor.moveVelocity(125);
+  pros::Task::delay(350);
+  flooperMotor.moveVelocity(0);
+  pros::Task::delay(50);
+  flooperMotor.tarePosition();
+  flooperMotor.moveAbsolute(0, 100); */
+
+  myChassis.setMaxVelocity(80);
+  myChassis.moveDistance(40_in);
+  pros::Task::delay(500);
+  myChassis.moveDistance(-35_in);
+  myChassis.turnAngle(10_deg);
+  myChassis.moveDistance(-33_in);
+  myChassis.turnAngle(73_deg);
+  myChassis.moveDistance(-16_in);
+  myChassis.setMaxVelocity(200);
+  myChassis.moveDistance(-32_in);
+}
 void autonomous() {
   /*#include "literals.h"
   if(color == 0 && runDrive) {
@@ -215,5 +241,6 @@ void autonomous() {
   pros::Task::delay(50);
   flooperMotor.tarePosition();*/
   parkFar();
+  //pSkills();
 
 }
