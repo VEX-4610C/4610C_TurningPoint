@@ -19,6 +19,8 @@ using namespace okapi;
 
 #include "constants.h"
 
+void parkFar(int multi);
+
 bool inScoreMode = 0;
 
 
@@ -93,7 +95,7 @@ void opcontrol() {
 
 	int reverseDrive = 1;
 	int needToFlipFlooper = 0;
-	liftMotor.moveVelocity(-200);
+	// liftMotor.moveVelocity(-200);
 	pros::Task::delay(500);
 	liftMotor.tarePosition();
 	liftMotor.moveVelocity(0);
@@ -124,21 +126,13 @@ void opcontrol() {
 			flooperMotor.tarePosition();
 		}
 
-		if((flooperButton.changedToPressed() || needToFlipFlooper)  && !inScoreMode) {
-			if(liftMotor.getPosition() < LIFT_MIN_TWIST) {
-				liftPosController.flipDisable(false);
-				liftPosController.setTarget(LIFT_MIN_TWIST);
-				needToFlipFlooper = 1;
-			}
-			else if (liftMotor.getPosition() > LIFT_MIN_TWIST){
+		if(flooperButton.changedToPressed()) {
 				if(flooperState == 0) {
 					flooperState = -190;
 				}
 				else {
 					flooperState = 0;
 				}
-				needToFlipFlooper = 0;
-			}
 		}
 		if(reverseButton.changedToPressed()) {
 			reverseDrive *= -1;

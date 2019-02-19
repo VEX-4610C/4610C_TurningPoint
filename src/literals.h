@@ -4,10 +4,14 @@ bool manualIndex = 0;
 bool capGrabState = false;
 bool indexerState = 0;
 
-auto frontLeft = Motor(19, false, AbstractMotor::gearset::green);
-auto backLeft = Motor(20, false, AbstractMotor::gearset::green);
-auto frontRight = Motor(12, true, AbstractMotor::gearset::green);
+auto frontLeft = Motor(18, false, AbstractMotor::gearset::green);
+auto backLeft = Motor(19, false, AbstractMotor::gearset::green);
+auto frontRight = Motor(21, true, AbstractMotor::gearset::green);
 auto backRight = Motor(15, true, AbstractMotor::gearset::green);
+frontLeft.setBrakeMode(AbstractMotor::brakeMode::hold);
+backLeft.setBrakeMode(AbstractMotor::brakeMode::hold);
+frontRight.setBrakeMode(AbstractMotor::brakeMode::hold);
+backRight.setBrakeMode(AbstractMotor::brakeMode::hold);
 
 
 auto myChassis = ChassisControllerFactory::create(
@@ -18,12 +22,12 @@ auto myChassis = ChassisControllerFactory::create(
 
 auto indexer = pros::ADIDigitalOut(4, false);
 
-auto liftMotor = Motor(9, false, AbstractMotor::gearset::green);
+auto liftMotor = Motor(6, false, AbstractMotor::gearset::green);
 liftMotor.setBrakeMode(AbstractMotor::brakeMode::brake);
 auto liftPosController = AsyncControllerFactory::posIntegrated(liftMotor, 200);
 
 
-auto flooperMotor = Motor(5, false, AbstractMotor::gearset::green);
+auto flooperMotor = Motor(2, false, AbstractMotor::gearset::green);
 flooperMotor.setBrakeMode(AbstractMotor::brakeMode::brake);
 auto capGrab = pros::ADIDigitalOut(1, true);
 
