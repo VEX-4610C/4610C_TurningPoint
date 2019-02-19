@@ -72,10 +72,11 @@ void capAuto(int multi) {
   #include "literals.h"
 
   capGrab.set_value(0);
+  flooperMotor.setBrakeMode(AbstractMotor::brakeMode::hold);
   liftPosController.flipDisable(true);
   liftMotor.moveVelocity(-200);
   pros::Task::delay(1200);
-  liftMotor.moveVelocity(0);
+  liftMotor.moveVelocity(-25);
   liftMotor.tarePosition();
 
   flooperMotor.moveVelocity(125);
@@ -87,36 +88,33 @@ void capAuto(int multi) {
 
 
   myChassis.setMaxVelocity(125);
-
-  myChassis.moveDistance(10_in);
-  myChassis.turnAngle(-45_deg);
-  myChassis.turnAngle(45_deg);
-  myChassis.moveDistance(30_in);
-  myChassis.turnAngle(-45_deg);
-  myChassis.turnAngle(45_deg);
-  myChassis.moveDistance(-10_in);
-  myChassis.turnAngle(90_deg);
-
-  myChassis.moveDistance(10_in);
-  myChassis.turnAngle(-45_deg);
+  myChassis.moveDistance(35_in);
+  myChassis.turnAngle(-65_deg);
 
 
-  flooperMotor.moveVelocity(125);
-  pros::Task::delay(350);
-  flooperMotor.moveVelocity(0);
-  pros::Task::delay(50);
-  flooperMotor.tarePosition();
-
-  liftMotor.moveVelocity(-200);
-  pros::Task::delay(1200);
-  liftMotor.moveVelocity(0);
-  liftMotor.tarePosition();
 
 
-  pros::Task::delay(200);
+  myChassis.moveDistance(14_in);
+  myChassis.turnAngle(10_deg);
+  myChassis.moveDistance(8_in);
+
   capGrab.set_value(1);
-  myChassis.moveDistance(12_in);
-  pros::Task::delay(300);
+  pros::Task::delay(500);
+
+
+  myChassis.moveDistance(-20_in);
+  myChassis.turnAngle(-130_deg);
+  myChassis.moveDistance(24_in);
+  liftPosController.flipDisable(false);
+  liftPosController.setTarget(1400);
+  while(liftMotor.getPosition() < 500);
+  flooperMotor.moveAbsolute(-190, 100);
+  indexer.set_value(0);
+  while(liftMotor.getPosition() < 1300);
+
+  myChassis.setMaxVelocity(100);
+  myChassis.moveDistance(15_in);
+  while(1);
 
 
 
