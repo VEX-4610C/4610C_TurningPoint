@@ -72,12 +72,16 @@ void capAuto(int multi) {
   #include "literals.h"
 
   capGrab.set_value(0);
+  indexer.set_value(1);
+
   flooperMotor.setBrakeMode(AbstractMotor::brakeMode::hold);
+  liftMotor.setBrakeMode(AbstractMotor::brakeMode::hold);
   liftPosController.flipDisable(true);
   liftMotor.moveVelocity(-200);
   pros::Task::delay(1200);
-  liftMotor.moveVelocity(-25);
+  liftMotor.moveVelocity(0);
   liftMotor.tarePosition();
+  liftMotor.moveAbsolute(0, 25);
 
   flooperMotor.moveVelocity(125);
   pros::Task::delay(350);
@@ -89,31 +93,49 @@ void capAuto(int multi) {
 
   myChassis.setMaxVelocity(125);
   myChassis.moveDistance(35_in);
-  myChassis.turnAngle(-65_deg);
+  myChassis.turnAngle(65_deg * multi);
 
 
 
-
-  myChassis.moveDistance(14_in);
-  myChassis.turnAngle(10_deg);
-  myChassis.moveDistance(8_in);
+  myChassis.moveDistance(16_in);
+  myChassis.turnAngle(-10_deg * multi);
 
   capGrab.set_value(1);
-  pros::Task::delay(500);
+
+  myChassis.moveDistance(3_in);
+  capGrab.set_value(1);
 
 
-  myChassis.moveDistance(-20_in);
-  myChassis.turnAngle(-130_deg);
-  myChassis.moveDistance(24_in);
+  myChassis.moveDistance(-15_in);
+  myChassis.turnAngle(130_deg * multi);
+  myChassis.moveDistance(26_in);
   liftPosController.flipDisable(false);
-  liftPosController.setTarget(1400);
+  liftPosController.setTarget(1450);
   while(liftMotor.getPosition() < 500);
   flooperMotor.moveAbsolute(-190, 100);
+  while(liftMotor.getPosition() < 1350);
   indexer.set_value(0);
-  while(liftMotor.getPosition() < 1300);
+  myChassis.setMaxVelocity(80);
+  pros::Task::delay(250);
 
-  myChassis.setMaxVelocity(100);
-  myChassis.moveDistance(15_in);
+  myChassis.tank(0.35, 0.35);
+  pros::Task::delay(750);
+  myChassis.tank(0, 0);
+  liftPosController.flipDisable(true);
+  indexer.set_value(1);
+  liftMotor.moveVelocity(-130);
+  pros::Task::delay(250);
+  liftMotor.moveVelocity(0);
+  capGrab.set_value(0);
+  pros::Task::delay(250);
+  myChassis.tank(-0.35, -0.35);
+  pros::Task::delay(750);
+  myChassis.tank(0, 0);
+  liftMotor.moveVelocity(-130);
+
+
+
+
   while(1);
 
 
@@ -132,7 +154,8 @@ void pSkills() {
   myChassis.moveDistance(-57_in);
 }
 void autonomous() {
-  capAuto(BLUE);
+
+  capAuto(RED);
   //pSkills();
 
 }

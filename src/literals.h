@@ -29,7 +29,7 @@ auto liftPosController = AsyncControllerFactory::posIntegrated(liftMotor, 200);
 
 auto flooperMotor = Motor(2, false, AbstractMotor::gearset::green);
 flooperMotor.setBrakeMode(AbstractMotor::brakeMode::brake);
-auto capGrab = pros::ADIDigitalOut(1, true);
+auto capGrab = pros::ADIDigitalOut(2, true);
 
 auto brakeButton = ControllerButton(ControllerDigital::right);
 auto liftUpButton = ControllerButton(ControllerDigital::R1);
