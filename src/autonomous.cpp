@@ -18,6 +18,7 @@
 
 using namespace okapi;
 extern pros::ADIGyro* gyro;
+extern pros::ADIGyro* turnGyro;
 
 #include "constants.h"
 #define GYRO_MULTIPLIER 9
@@ -30,52 +31,9 @@ template <typename T> T CLAMP(const T& value, const T& low, const T& high)
 void parkFar(int multi) {
   #include "literals.h"
 
-  liftPosController.flipDisable(true);
-  liftMotor.moveVelocity(-200);
-  pros::Task::delay(1200);
-  liftMotor.moveVelocity(0);
-  liftMotor.tarePosition();
-
-  flooperMotor.moveVelocity(125);
-  pros::Task::delay(350);
-  flooperMotor.moveVelocity(0);
-  pros::Task::delay(50);
-  flooperMotor.tarePosition();
-
-  liftMotor.moveVelocity(200);
-  pros::Task::delay(500);
-  liftMotor.moveVelocity(0);
-  liftMotor.moveVelocity(-200);
-  pros::Task::delay(300);
-  liftMotor.moveVelocity(0);
-
-  pros::Task::delay(500);
-
-  myChassis.setMaxVelocity(125);
-  myChassis.moveDistance(39_in);
-  myChassis.turnAngle(90_deg * multi);
-
-  liftPosController.setTarget(200);
-  myChassis.setMaxVelocity(500);
-  myChassis.tank(-1, -1);
-
-  gyro->reset();
-  while(abs(gyro->get_value()) < 80) {
-  }
-  while(abs(gyro->get_value()) > 10) {
-  }
-
-  myChassis.tank(0, 0);
-}
-
-void capAuto(int multi) {
-  #include "literals.h"
-
   capGrab.set_value(0);
   indexer.set_value(1);
 
-  flooperMotor.setBrakeMode(AbstractMotor::brakeMode::hold);
-  liftMotor.setBrakeMode(AbstractMotor::brakeMode::hold);
   liftPosController.flipDisable(true);
   liftMotor.moveVelocity(-200);
   pros::Task::delay(1200);
@@ -84,31 +42,79 @@ void capAuto(int multi) {
   liftMotor.moveAbsolute(0, 25);
 
   flooperMotor.moveVelocity(125);
-  pros::Task::delay(350);
+  pros::Task::delay(400);
   flooperMotor.moveVelocity(0);
-  pros::Task::delay(50);
   flooperMotor.tarePosition();
+  pros::Task::delay(50);
+  flooperMotor.moveAbsolute(0, 25);
+
 
 
 
   myChassis.setMaxVelocity(125);
+  capGrab.set_value(1);
+  myChassis.moveDistance(34_in);
+  myChassis.turnAngle(90_deg * multi);
+  capGrab.set_value(0);
+
+  liftPosController.setTarget(500);
+  myChassis.setMaxVelocity(500);
+  myChassis.tank(-1, -1);
+
+  gyro->reset();
+  while(abs(gyro->get_value()) < 80) {
+  }
+  while(abs(gyro->get_value()) > 10) {
+  }
+  pros::Task::delay(125);
+  myChassis.tank(0, 0);
+}
+
+void capAutoBlue() {
+  int multi = -1;
+  #include "literals.h"
+
+  capGrab.set_value(0);
+  indexer.set_value(1);
+
+  liftPosController.flipDisable(true);
+  liftMotor.moveVelocity(-200);
+  pros::Task::delay(1200);
+  liftMotor.moveVelocity(0);
+  liftMotor.tarePosition();
+  liftMotor.moveAbsolute(0, 25);
+
+  flooperMotor.moveVelocity(125);
+  pros::Task::delay(400);
+  flooperMotor.moveVelocity(0);
+  flooperMotor.tarePosition();
+  pros::Task::delay(50);
+  flooperMotor.moveAbsolute(0, 25);
+
+
+
+
+  myChassis.setMaxVelocity(150);
   myChassis.moveDistance(35_in);
-  myChassis.turnAngle(65_deg * multi);
+  myChassis.turnAngle(75_deg * multi);
 
 
+  myChassis.setMaxVelocity(100);
+  myChassis.moveDistance(10_in);
+  myChassis.turnAngle(-25_deg * multi);
 
-  myChassis.moveDistance(16_in);
-  myChassis.turnAngle(-10_deg * multi);
-
+  myChassis.setMaxVelocity(60);
+  myChassis.moveDistance(8_in);
   capGrab.set_value(1);
+  pros::Task::delay(100);
+  liftPosController.setTarget(250);
 
-  myChassis.moveDistance(3_in);
-  capGrab.set_value(1);
 
-
-  myChassis.moveDistance(-15_in);
-  myChassis.turnAngle(130_deg * multi);
-  myChassis.moveDistance(26_in);
+  myChassis.setMaxVelocity(135);
+  myChassis.moveDistance(-11_in);
+  int gyroAdj = (turnGyro->get_value() - 300*multi) / 20;
+  myChassis.turnAngle((135) * multi * degree);
+  myChassis.moveDistance(28_in);
   liftPosController.flipDisable(false);
   liftPosController.setTarget(1450);
   while(liftMotor.getPosition() < 500);
@@ -116,22 +122,17 @@ void capAuto(int multi) {
   while(liftMotor.getPosition() < 1350);
   indexer.set_value(0);
   myChassis.setMaxVelocity(80);
-  pros::Task::delay(250);
+  pros::Task::delay(100);
 
-  myChassis.tank(0.35, 0.35);
-  pros::Task::delay(750);
-  myChassis.tank(0, 0);
+  myChassis.moveDistance(11_in);
   liftPosController.flipDisable(true);
   indexer.set_value(1);
-  liftMotor.moveVelocity(-130);
-  pros::Task::delay(250);
+  liftMotor.moveVelocity(-150);
+  pros::Task::delay(500);
   liftMotor.moveVelocity(0);
   capGrab.set_value(0);
-  pros::Task::delay(250);
-  myChassis.tank(-0.35, -0.35);
-  pros::Task::delay(750);
-  myChassis.tank(0, 0);
-  liftMotor.moveVelocity(-130);
+  pros::Task::delay(350);
+  myChassis.moveDistance(-10_in);
 
 
 
@@ -140,6 +141,88 @@ void capAuto(int multi) {
 
 
 
+}
+void capAutoRed() {
+  int multi = 1;
+  #include "literals.h"
+
+  capGrab.set_value(0);
+  indexer.set_value(1);
+
+  liftPosController.flipDisable(true);
+  liftMotor.moveVelocity(-200);
+  pros::Task::delay(1200);
+  liftMotor.moveVelocity(0);
+  liftMotor.tarePosition();
+  liftMotor.moveAbsolute(0, 25);
+
+  flooperMotor.moveVelocity(125);
+  pros::Task::delay(400);
+  flooperMotor.moveVelocity(0);
+  flooperMotor.tarePosition();
+  pros::Task::delay(50);
+  flooperMotor.moveAbsolute(0, 25);
+
+
+
+
+  myChassis.setMaxVelocity(150);
+  capGrab.set_value(1);
+  myChassis.moveDistance(30_in);
+  myChassis.turnAngle(75_deg * multi);
+  capGrab.set_value(0);
+
+  pros::Task::delay(350);
+
+  myChassis.setMaxVelocity(100);
+  myChassis.moveDistance(10_in);
+  myChassis.turnAngle(-25_deg * multi);
+
+  myChassis.setMaxVelocity(60);
+  myChassis.moveDistance(8_in);
+  capGrab.set_value(1);
+  pros::Task::delay(100);
+  liftPosController.setTarget(250);
+
+
+  myChassis.setMaxVelocity(135);
+  myChassis.moveDistance(-14_in);
+  int gyroAdj = (turnGyro->get_value() - 300*multi) / 20;
+  myChassis.turnAngle((130) * multi * degree);
+  myChassis.moveDistance(21_in);
+  liftPosController.flipDisable(false);
+  liftPosController.setTarget(1450);
+  while(liftMotor.getPosition() < 500);
+  flooperMotor.moveAbsolute(-190, 100);
+  while(liftMotor.getPosition() < 1350);
+  indexer.set_value(0);
+  myChassis.setMaxVelocity(80);
+  pros::Task::delay(100);
+
+  myChassis.moveDistance(11_in);
+  liftPosController.flipDisable(true);
+  indexer.set_value(1);
+  liftMotor.moveVelocity(-150);
+  pros::Task::delay(500);
+  liftMotor.moveVelocity(0);
+  capGrab.set_value(0);
+  pros::Task::delay(350);
+  myChassis.moveDistance(-10_in);
+
+
+
+
+  while(1);
+
+
+
+
+}
+void capAuto(int multi) {
+  if(multi == RED)
+    capAutoRed();
+  else if(multi == BLUE)
+    capAutoBlue();
 }
 void pSkills() {
   #include "literals.h"
@@ -155,7 +238,7 @@ void pSkills() {
 }
 void autonomous() {
 
-  capAuto(RED);
+  parkFar(RED);
   //pSkills();
 
 }

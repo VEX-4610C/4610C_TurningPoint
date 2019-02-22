@@ -99,6 +99,7 @@ void opcontrol() {
 	pros::Task::delay(500);
 	liftMotor.tarePosition();
 	liftMotor.moveVelocity(0);
+	myChassis.setMaxVelocity(200);
 	while(true) {
 		if(reverseDrive == -1) {
 				myChassis.tank(-controller.getAnalog(ControllerAnalog::rightY),

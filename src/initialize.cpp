@@ -17,10 +17,12 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 pros::ADIGyro* gyro;
+pros::ADIGyro* turnGyro;
 void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 	gyro = new pros::ADIGyro(5, 1);
+	turnGyro = new pros::ADIGyro(6, 1);
 
 	pros::lcd::register_btn1_cb(on_center_button);
 }
