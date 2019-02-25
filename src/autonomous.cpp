@@ -100,21 +100,21 @@ void capAutoBlue() {
 
 
   myChassis.setMaxVelocity(100);
-  myChassis.moveDistance(10_in);
+  myChassis.moveDistance(8_in);
   myChassis.turnAngle(-25_deg * multi);
 
   myChassis.setMaxVelocity(60);
-  myChassis.moveDistance(8_in);
+  myChassis.moveDistance(6_in);
   capGrab.set_value(1);
   pros::Task::delay(100);
   liftPosController.setTarget(250);
 
 
   myChassis.setMaxVelocity(135);
-  myChassis.moveDistance(-11_in);
+  myChassis.moveDistance(-6_in);
   int gyroAdj = (turnGyro->get_value() - 300*multi) / 20;
   myChassis.turnAngle((135) * multi * degree);
-  myChassis.moveDistance(28_in);
+  myChassis.moveDistance(25_in);
   liftPosController.flipDisable(false);
   liftPosController.setTarget(1450);
   while(liftMotor.getPosition() < 500);
@@ -124,7 +124,7 @@ void capAutoBlue() {
   myChassis.setMaxVelocity(80);
   pros::Task::delay(100);
 
-  myChassis.moveDistance(11_in);
+  myChassis.moveDistance(12_in);
   liftPosController.flipDisable(true);
   indexer.set_value(1);
   liftMotor.moveVelocity(-150);
@@ -168,7 +168,7 @@ void capAutoRed() {
 
   myChassis.setMaxVelocity(150);
   capGrab.set_value(1);
-  myChassis.moveDistance(30_in);
+  myChassis.moveDistance(32_in);
   myChassis.turnAngle(75_deg * multi);
   capGrab.set_value(0);
 
@@ -186,10 +186,10 @@ void capAutoRed() {
 
 
   myChassis.setMaxVelocity(135);
-  myChassis.moveDistance(-14_in);
+  myChassis.moveDistance(-10_in);
   int gyroAdj = (turnGyro->get_value() - 300*multi) / 20;
-  myChassis.turnAngle((130) * multi * degree);
-  myChassis.moveDistance(21_in);
+  myChassis.turnAngle((124) * multi * degree);
+  myChassis.moveDistance(24_in);
   liftPosController.flipDisable(false);
   liftPosController.setTarget(1450);
   while(liftMotor.getPosition() < 500);
@@ -199,7 +199,7 @@ void capAutoRed() {
   myChassis.setMaxVelocity(80);
   pros::Task::delay(100);
 
-  myChassis.moveDistance(11_in);
+  myChassis.moveDistance(13_in);
   liftPosController.flipDisable(true);
   indexer.set_value(1);
   liftMotor.moveVelocity(-150);
@@ -234,11 +234,22 @@ void pSkills() {
   liftPosController.setTarget(150);
   myChassis.moveDistance(-12_in);
   myChassis.setMaxVelocity(125);
-  myChassis.moveDistance(-57_in);
+
+  gyro->reset();
+  myChassis.tank(-1, -1);
+  while(abs(gyro->get_value()) < 80) {
+  }
+  while(abs(gyro->get_value()) > 10) {
+  }
+  while(abs(gyro->get_value()) < 80) {
+  }
+  while(abs(gyro->get_value()) > 20) {
+  }
+  myChassis.tank(0, 0);
 }
 void autonomous() {
-
-  parkFar(RED);
+  capAuto(BLUE);
+  //parkFar(RED);
   //pSkills();
 
 }

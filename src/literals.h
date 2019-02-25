@@ -6,7 +6,7 @@ bool indexerState = 0;
 
 auto frontLeft = Motor(18, false, AbstractMotor::gearset::green);
 auto backLeft = Motor(19, false, AbstractMotor::gearset::green);
-auto frontRight = Motor(21, true, AbstractMotor::gearset::green);
+auto frontRight = Motor(16, true, AbstractMotor::gearset::green);
 auto backRight = Motor(15, true, AbstractMotor::gearset::green);
 frontLeft.setBrakeMode(AbstractMotor::brakeMode::hold);
 backLeft.setBrakeMode(AbstractMotor::brakeMode::hold);
@@ -27,7 +27,7 @@ liftMotor.setBrakeMode(AbstractMotor::brakeMode::brake);
 auto liftPosController = AsyncControllerFactory::posIntegrated(liftMotor, 200);
 
 
-auto flooperMotor = Motor(1, false, AbstractMotor::gearset::green);
+auto flooperMotor = Motor(11, false, AbstractMotor::gearset::green);
 flooperMotor.setBrakeMode(AbstractMotor::brakeMode::brake);
 auto capGrab = pros::ADIDigitalOut(2, true);
 

@@ -100,6 +100,24 @@ void opcontrol() {
 	liftMotor.tarePosition();
 	liftMotor.moveVelocity(0);
 	myChassis.setMaxVelocity(200);
+
+	/* capGrab.set_value(0);
+  indexer.set_value(1);
+
+  liftPosController.flipDisable(true);
+  liftMotor.moveVelocity(-200);
+  pros::Task::delay(1200);
+  liftMotor.moveVelocity(0);
+  liftMotor.tarePosition();
+  liftMotor.moveAbsolute(0, 25);
+
+  flooperMotor.moveVelocity(125);
+  pros::Task::delay(400);
+  flooperMotor.moveVelocity(0);
+  flooperMotor.tarePosition();
+  pros::Task::delay(50);
+  flooperMotor.moveAbsolute(0, 25); */
+
 	while(true) {
 		if(reverseDrive == -1) {
 				myChassis.tank(-controller.getAnalog(ControllerAnalog::rightY),
